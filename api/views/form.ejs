@@ -1,0 +1,15 @@
+<%- include('partials/header', { title: post.id ? ('Edit: ' + post.title) : 'New Post' }) %>
+<form method="POST" action="<%= action %>">
+  <div class="field">
+    <label>Title</label>
+    <input name="title" value="<%= post.title %>" required />
+  </div>
+
+  <div class="field">
+    <label>Body</label>
+    <textarea name="body" rows="8"><%= post.body %></textarea>
+  </div>
+
+  <button class="btn" type="submit"><%= button %></button>
+</form>
+<%- include('partials/footer') %>
