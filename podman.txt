@@ -1,0 +1,34 @@
+C:\Program Files\RedHat\Podman>podman machine init --cpus 4 --memory 4096 --disk-size 100
+Looking up Podman Machine image at quay.io/podman/machine-os:5.6 to create VM
+Extracting compressed file: podman-machine-default-amd64.vhdx: done
+Machine init complete
+To start your machine run:
+
+        podman machine start
+
+
+C:\Program Files\RedHat\Podman>podman machine start
+Starting machine "podman-machine-default"
+
+This machine is currently configured in rootless mode. If your containers
+require root permissions (e.g. ports < 1024), or if you run into compatibility
+issues with non-podman clients, you can switch using the following command:
+
+        podman machine set --rootful
+
+podman info
+podman ps
+
+API forwarding listening on: npipe:////./pipe/docker_engine
+Docker API clients default to this address. You do not need to set DOCKER_HOST.
+
+Machine "podman-machine-default" started successfully
+
+C:\Program Files\RedHat\Podman>
+
+ABOVE IS NOT WORKING USE THE FOLLOWING COMMAND
+see the docker image id using docker ps
+and use the following command to run it
+docker run -p 3000:3000 -p 4000:4000 f45ebc52ab30
+
+
