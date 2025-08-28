@@ -2,22 +2,38 @@ import { useState } from 'react';
 import { api } from '../../lib/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-
+import { API_BASE } from "../../lib/api";
 export default function NewPost() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
-  async function onSubmit(e) {
-    e.preventDefault();
-    try {
-      await api('/posts', { method: 'POST', body: JSON.stringify({ title, body }) });
-      router.push('/');
-    } catch (err) {
-      setError(err.message);
+    async function onSubmit(e) {
+        e.preventDefault();
+        setError("");
+
+        try {
+            const res = await fetch(`${API_BASE}/api/posts`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, body }),
+            });
+
+            const isJson =
+                (res.headers.get("content-type") || "").includes("application/json");
+
+            if (!res.ok) {
+                const text = isJson ? JSON.stringify(await res.json()) : await res.text();
+                throw new Error(text.slice(0, 200));
+            }
+
+            const created = await res.json(); // {id, title, body, ...}
+            router.push(`/posts/${created.id}`);
+        } catch (err) {
+            setError(err.message || "Create failed");
+        }
     }
-  }
 
   return (
     <main style={{maxWidth:700, margin:'0 auto', padding:20}}>

@@ -1,33 +1,28 @@
-import Link from 'next/link';
-import { API_BASE } from '../lib/api';
-
-export async function getServerSideProps() {
-  const res = await fetch(`${API_BASE}/posts`);
-  const posts = await res.json();
-  return { props: { posts } };
-}
+// web/pages/index.js
+import Link from "next/link";
+import PostList from "../components/PostList";
+import { api, API_BASE } from "../lib/api";
 
 export default function Home({ posts }) {
-  return (
-    <main style={{maxWidth:900, margin:'0 auto', padding:20}}>
-      <h1>Next.js Posts</h1>
-      <p>
-        Backend API at <code>http://localhost:4000/api</code> &nbsp;|&nbsp;
-        <Link href="/posts/new">Create new</Link> &nbsp;|&nbsp;
-        <a href="http://localhost:4000/posts" target="_blank" rel="noreferrer">Open EJS version</a>
-      </p>
-      {posts.length === 0 ? (
-        <p>No posts yet</p>
-      ) : (
-        <ul style={{listStyle:'none', padding:0, display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:12}}>
-          {posts.map(p => (
-            <li key={p.id} style={{background:'#fff', border:'1px solid #eee', borderRadius:12, padding:12}}>
-              <h3><Link href={`/posts/${p.id}`}>{p.title}</Link></h3>
-              <p>{(p.body || '').slice(0,120)}...</p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
-  );
+    return (
+        <main style={{maxWidth:900, margin:"0 auto", padding:20}}>
+            <h1>Next.js Posts</h1>
+            <p>
+                Backend API at <code>{API_BASE}/api</code> &nbsp;|&nbsp;
+                <Link href="/posts/new">Create new</Link> &nbsp;|&nbsp;
+                <a href="http://localhost:4000/posts" target="_blank" rel="noreferrer">Open EJS version</a>
+            </p>
+            <PostList posts={posts} />
+        </main>
+    );
+}
+
+export async function getServerSideProps() {
+    try {
+        const posts = await api("/api/posts");
+        return { props: { posts } };
+    } catch (err) {
+        console.error("Failed to fetch posts:", err.message);
+        return { props: { posts: [] } };
+    }
 }

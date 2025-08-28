@@ -5,7 +5,7 @@ import { API_BASE, api } from '../../lib/api';
 
 export async function getServerSideProps(ctx) {
   const { id } = ctx.params;
-  const res = await fetch(`${API_BASE}/posts/${id}`);
+  const res = await fetch(`${API_BASE}/api/posts/${id}`);
   if (res.status !== 200) return { notFound: true };
   const post = await res.json();
   return { props: { post } };
@@ -31,7 +31,7 @@ export default function Post({ post }) {
   async function remove() {
     if (!confirm('Delete this post?')) return;
     try {
-      await api(`/posts/${post.id}`, { method: 'DELETE' });
+      await api(`/api/posts/${post.id}`, { method: 'DELETE' });
       router.push('/');
     } catch (err) {
       setError(err.message);
