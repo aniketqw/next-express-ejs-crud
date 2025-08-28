@@ -15,6 +15,7 @@ export async function getServerSideProps({ params }) {
 export default function Post({ post }) {
     const [title, setTitle] = useState(post.title);
     const [body, setBody] = useState(post.body || "");
+    const [editing, setEditing] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter();
 
@@ -25,7 +26,8 @@ export default function Post({ post }) {
                 method: "PUT",
                 body: JSON.stringify({ title, body }),
             });
-            router.push("/"); // go back to home after successful save
+            setEditing(false);
+            router.replace(router.asPath);
         } catch (e) {
             setError(e.message || "Failed to fetch");
         }
@@ -46,20 +48,27 @@ export default function Post({ post }) {
         <main style={{ maxWidth: 700, margin: "0 auto", padding: 20 }}>
             <p><Link href="/">← Back</Link></p>
             {error && <p style={{ color: "crimson" }}>{error}</p>}
-
-            <div style={{ display: "flex", flexDirection: "column", marginBottom: 12 }}>
-                <label>Title</label>
-                <input value={title} onChange={(e) => setTitle(e.target.value)} />
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", marginBottom: 12 }}>
-                <label>Body</label>
-                <textarea rows={8} value={body} onChange={(e) => setBody(e.target.value)} />
-            </div>
-
-            <button onClick={save}>Save</button>
-            <button style={{ marginLeft: 8 }} onClick={() => router.back()}>Cancel</button>
-            <button style={{ marginLeft: 8, color: "crimson" }} onClick={remove}>Delete</button>
+            {editing ? (
+                <>
+                    <div style={{ display: "flex", flexDirection: "column", marginBottom: 12 }}>
+                        <label>Title</label>
+                        <input value={title} onChange={(e) => setTitle(e.target.value)} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", marginBottom: 12 }}>
+                        <label>Body</label>
+                        <textarea rows={8} value={body} onChange={(e) => setBody(e.target.value)} />
+                    </div>
+                    <button onClick={save}>Save</button>
+                    <button style={{ marginLeft: 8 }} onClick={() => setEditing(false)}>Cancel</button>
+                </>
+            ) : (
+                <>
+                    <h1>{title}</h1>
+                    <p>{body}</p>
+                    <button onClick={() => setEditing(true)}>Edit</button>
+                    <button style={{ marginLeft: 8, color: "crimson" }} onClick={remove}>Delete</button>
+                </>
+            )}
         </main>
     );
 }
